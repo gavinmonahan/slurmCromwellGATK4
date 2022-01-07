@@ -1,5 +1,6 @@
 {
-    "final_workflow_outputs_dir": "/data/cromwellGATK4/",
-    "final_workflow_log_dir": "/data/cromwellGATK4/",
-    "final_call_logs_dir": "/data/cromwellGATK4/"
+    "final_workflow_outputs_dir": "/scratch/hpi001/gatk_out/",
+    "use_relative_output_paths": true,
+    "final_workflow_log_dir": "/scratch/hpi001/gatk_out/",
+    "final_call_logs_dir": "/scratch/hpi001/gatk_out/"
 }

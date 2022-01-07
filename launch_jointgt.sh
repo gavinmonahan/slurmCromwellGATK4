@@ -2,15 +2,15 @@
 #SBATCH --nodes=1
 #SBATCH -c 2
 #SBATCH --job-name=jointGT  
-#SBATCH --partition=longq
-#SBATCH --account=pawsey0001
+#SBATCH --partition=day
+#SBATCH --account=hpi001
 #SBATCH --mem=8000
-#SBATCH --time=96:00:00
+#SBATCH --time=24:00:00
 #SBATCH --export=NONE
 
 module load java
 conda activate gatk4_pipeline
 
-java -Dconfig.file=/scratch/pawsey0001/sbeecroft/cromwell2/slurm.conf -jar /scratch/pawsey0001/sbeecroft/tool/cromwell-58.jar run /scratch/pawsey0001/sbeecroft/cromwell2/Multisample_jointgt_GATK4.wdl \
-   -i /scratch/pawsey0001/sbeecroft/cromwell2/Multisample_jointgt_GATK4_inputs_hg38.json \
-   -o /scratch/pawsey0001/sbeecroft/cromwell2/cromwell.options
+java -Dconfig.file=/group/hpi001/gatk/slurmCromwellGATK4/slurm.conf -jar /group/hpi001/gatk/slurmCromwellGATK4/cromwell-61.jar run /group/hpi001/gatk/slurmCromwellGATK4/Multisample_jointgt_GATK4.wdl \
+   -i /group/hpi001/gatk/slurmCromwellGATK4/Multisample_jointgt_GATK4_inputs_hg38.json \
+   -o /group/hpi001/gatk/slurmCromwellGATK4/cromwell.options

@@ -250,7 +250,7 @@ task FastqToUbam {
   String outpref 
 
   command {
-    java -Xmx8G -jar /scratch/pawsey0001/sbeecroft/tool/picard.jar FastqToSam \
+    java -Xmx9G -jar /group/hpi001/gatk/picard.jar FastqToSam \
     FASTQ=${fastq1} \
     FASTQ2=${fastq2} \
     OUTPUT=${outpref}.unmapped.bam \
@@ -281,7 +281,7 @@ task GetBwaVersion {
     sed 's/Version: //'
   }
   runtime {
-    cpus: 4
+    cpus: 2
     requested_memory: 1000
   }
   output {
@@ -317,7 +317,7 @@ task SamToFastqAndBwaMem {
     # set the bash variable needed for the command-line
     bash_ref_fasta=${ref_fasta}
 
-		java -Dsamjdk.compression_level=${compression_level} -Xms3000m -jar /scratch/pawsey0001/sbeecroft/tool/picard.jar \
+		java -Dsamjdk.compression_level=${compression_level} -Xms3000m -Xmx255G -jar /group/hpi001/gatk/picard.jar \
       SamToFastq \
 			INPUT=${input_bam} \
 			FASTQ=/dev/stdout \
@@ -330,8 +330,8 @@ task SamToFastqAndBwaMem {
 
   >>>
   runtime {
-    cpus: 16
-    requested_memory: 64000
+    cpus: 24
+    requested_memory: 256000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -355,7 +355,7 @@ task MergeBamAlignment {
   command {
     # set the bash variable needed for the command-line
     bash_ref_fasta=${ref_fasta}
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms3000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms3000m" \
       MergeBamAlignment \
       --VALIDATION_STRINGENCY SILENT \
       --EXPECTED_ORIENTATIONS FR \
@@ -382,8 +382,8 @@ task MergeBamAlignment {
       --UNMAP_CONTAMINANT_READS true
   }
   runtime {
-    cpus: 4
-    requested_memory: 8000
+    cpus: 8
+    requested_memory: 16000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -403,7 +403,7 @@ task SortAndFixTags {
   command {
     set -o pipefail
 
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms30000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms30000m" \
       SortSam \
       --INPUT ${input_bam} \
       --OUTPUT /dev/stdout \
@@ -411,7 +411,7 @@ task SortAndFixTags {
       --CREATE_INDEX false \
       --CREATE_MD5_FILE false \
     | \
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms500m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms500m" \
       SetNmAndUqTags \
       --INPUT /dev/stdin \
       --OUTPUT ${output_bam_basename}.bam \
@@ -442,7 +442,7 @@ task MarkDuplicates {
  # This works because the output of BWA is query-grouped and therefore, so is the output of MergeBamAlignment.
  # While query-grouped isn't actually query-sorted, it's good enough for MarkDuplicates with ASSUME_SORT_ORDER="queryname"
   command {
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms40000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms40000m" \
       MarkDuplicates \
       --INPUT ${sep=' --INPUT ' input_bams} \
       --OUTPUT ${output_bam_basename}.bam \
@@ -507,8 +507,8 @@ task CreateSequenceGroupingTSV {
     CODE
   >>>
   runtime {
-    cpus: 2
-    requested_memory: 4000
+    cpus: 8
+    requested_memory: 20000
   }
   output {
     Array[Array[String]] sequence_grouping = read_tsv("sequence_grouping.txt")
@@ -532,7 +532,7 @@ task BaseRecalibrator {
   
 
   command { 
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Xms14000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xms14000m" \
       BaseRecalibrator \
       -R ${ref_fasta} \
       -I ${input_bam} \
@@ -543,8 +543,8 @@ task BaseRecalibrator {
       -L ${sep=" -L " sequence_group_interval}
   }
   runtime {
-    cpus: 4
-    requested_memory: 16000
+    cpus: 8
+    requested_memory: 32000
   }
   output {
     File recalibration_report = "${recalibration_report_filename}"
@@ -559,14 +559,14 @@ task GatherBqsrReports {
 
 
   command {
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Xms3000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xms3000m" \
       GatherBQSRReports \
       -I ${sep=' -I ' input_bqsr_reports} \
       -O ${output_report_filename}
     }
   runtime {
-    cpus: 2
-    requested_memory: 4000
+    cpus: 4
+    requested_memory: 8000
   }
   output {
     File output_bqsr_report = "${output_report_filename}"
@@ -586,7 +586,7 @@ task ApplyBQSR {
 
 
   command {  
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Xms14000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xms14000m" \
       ApplyBQSR \
       -R ${ref_fasta} \
       -I ${input_bam} \
@@ -599,8 +599,8 @@ task ApplyBQSR {
       --use-original-qualities
   }
   runtime {
-    cpus: 4
-    requested_memory: 16000
+    cpus: 8
+    requested_memory: 24000
   }
   output {
     File recalibrated_bam = "${output_bam_basename}.bam"
@@ -615,7 +615,7 @@ task GatherBamFiles {
   Int compression_level
 
   command {
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms2000m" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms2000m" \
       GatherBamFiles \
       --INPUT ${sep=' --INPUT ' input_bams} \
       --OUTPUT ${output_bam_basename}.bam \
@@ -623,8 +623,8 @@ task GatherBamFiles {
       --CREATE_MD5_FILE true
     }
   runtime {
-    cpus: 4
-    requested_memory: 12000
+    cpus: 8
+    requested_memory: 18000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -651,7 +651,7 @@ task HaplotypeCaller {
   command <<<
   set -e
   
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Xmx15000m ${java_opt}" \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xmx24000m ${java_opt}" \
       HaplotypeCaller \
       -R ${ref_fasta} \
       -I ${input_bam} \
@@ -662,8 +662,8 @@ task HaplotypeCaller {
   >>>
 
   runtime {
-    cpus: 4
-    requested_memory: 16000
+    cpus: 8
+    requested_memory: 24000
   }
 
   output {
@@ -682,7 +682,7 @@ task MergeGVCFs {
   command <<<
   set -e
 
-    /scratch/pawsey0001/sbeecroft/tool/gatk-4.2.0.0/gatk --java-options "-Xmx15000m"  \
+    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xmx24000m"  \
       MergeVcfs \
       --INPUT ${sep=' --INPUT ' input_vcfs} \
       --OUTPUT ${output_filename}
@@ -690,7 +690,7 @@ task MergeGVCFs {
 
   runtime {
     cpus: 8
-    requested_memory: 16000
+    requested_memory: 24000
   }
 
 

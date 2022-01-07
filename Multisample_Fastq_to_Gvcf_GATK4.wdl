@@ -105,7 +105,10 @@ task make_uniq_samples_file {
   command {
     cat ${inputSamplesFile} | cut -f1 | sort | uniq > uniq_samples.list
   }
-
+  runtime {
+    cpus: 24
+    requested_memory: 1000
+  }
   output {
     File uniq_samples_file = "uniq_samples.list"
     Array[String] uniq_samples = read_lines("uniq_samples.list")
@@ -120,7 +123,10 @@ task make_fastq_file {
   command {
     cat ${inputSamplesFile} | grep "^${sample_name}\s" > ${sample_name}.fastqs.txt
   }
-
+  runtime {
+    cpus: 24
+    requested_memory: 1000
+  }
   output {
     File sample_fastq_file = "${sample_name}.fastqs.txt"
   }
