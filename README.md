@@ -2,7 +2,7 @@
 See the [GATK](https://gatk.broadinstitute.org/hc/en-us) website for more information on this toolset 
 ## Assumptions
 - Using hg38 human reference genome build
-- Running using HPC/SLURM scheduling. This repo was specifically tested on Pawsey Zeus machine, primarily running in the `/scratch` partition. 
+- Running using HPC/SLURM scheduling. Sarah's repo was specifically tested on Pawsey Zeus machine, primarily running in the `/scratch` partition. This repo is a fork for running on UWA HPC Kaya.
 - Starting from short-read Illumina paired-end fastq files as input
 
 ### Dependencies
@@ -15,11 +15,14 @@ The following versions have been tested and work, but GATK and Cromwell are regu
 - Cromwell v61
 
 ## Quick start guide
+
+If you're running on Kaya, this has all been done.
+
 ### Installing and preparing environment for GATK4 with Cromwell
 
 1. Clone repository
 ```
-git clone https://github.com/SarahBeecroft/slurmCromwellGATK4.git
+git clone https://github.com/gavinmonahan/slurmCromwellGATK4.git
 cd slurmCromwellGATK4
 chmod +x *.sh
 ```
@@ -108,7 +111,7 @@ hapmap_3.3.hg38.vcf.gz.tbi
         - `launch_jointgt.sh` launched the gvcf joint genotyping to cohort vcf step. This is perfomed when you have run all samples through the fastq to gvcf stage.
         - Check the paths and parameters make sense for your machine
     - `slurm.conf`
-        - the main options here relate to the job scheduler. If you are running on Zeus at Pawsey, you should not need to alter these parameters.
+        - the main options here relate to the job scheduler.
     - `cromwell.options`
         - `cromwell.options` requires editing to provide the directory where you would like the final workflow outputs to be written
     - `Multisample_Fastq_to_Gvcf_GATK4.wdl`
