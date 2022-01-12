@@ -29,6 +29,6 @@
   ],
 
   "##_COMMENT4": "MISC PROGRAM PARAMETERS", 
-  "Multisample_Fastq_to_Gvcf_GATK4.bwa_commandline": "bwa mem -p -v 3 -t 24 -Y $bash_ref_fasta",
+  "Multisample_Fastq_to_Gvcf_GATK4.bwa_commandline": "bwa mem -p -v 3 -t 36 -Y $bash_ref_fasta",
   "Multisample_Fastq_to_Gvcf_GATK4.compression_level": 2
 }

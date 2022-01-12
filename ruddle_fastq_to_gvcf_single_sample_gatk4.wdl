@@ -330,7 +330,7 @@ task SamToFastqAndBwaMem {
 
   >>>
   runtime {
-    cpus: 24
+    cpus: 36
     requested_memory: 256000
   }
   output {
@@ -355,7 +355,7 @@ task MergeBamAlignment {
   command {
     # set the bash variable needed for the command-line
     bash_ref_fasta=${ref_fasta}
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms3000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms3000m" \
       MergeBamAlignment \
       --VALIDATION_STRINGENCY SILENT \
       --EXPECTED_ORIENTATIONS FR \
@@ -382,8 +382,8 @@ task MergeBamAlignment {
       --UNMAP_CONTAMINANT_READS true
   }
   runtime {
-    cpus: 8
-    requested_memory: 16000
+    cpus: 18
+    requested_memory: 128000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -403,7 +403,7 @@ task SortAndFixTags {
   command {
     set -o pipefail
 
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms30000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms30000m" \
       SortSam \
       --INPUT ${input_bam} \
       --OUTPUT /dev/stdout \
@@ -411,7 +411,7 @@ task SortAndFixTags {
       --CREATE_INDEX false \
       --CREATE_MD5_FILE false \
     | \
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms500m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms500m" \
       SetNmAndUqTags \
       --INPUT /dev/stdin \
       --OUTPUT ${output_bam_basename}.bam \
@@ -420,8 +420,8 @@ task SortAndFixTags {
       --REFERENCE_SEQUENCE ${ref_fasta}
   }
   runtime {
-    cpus: 8
-    requested_memory: 32000
+    cpus: 18
+    requested_memory: 128000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -442,7 +442,7 @@ task MarkDuplicates {
  # This works because the output of BWA is query-grouped and therefore, so is the output of MergeBamAlignment.
  # While query-grouped isn't actually query-sorted, it's good enough for MarkDuplicates with ASSUME_SORT_ORDER="queryname"
   command {
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms40000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms40000m" \
       MarkDuplicates \
       --INPUT ${sep=' --INPUT ' input_bams} \
       --OUTPUT ${output_bam_basename}.bam \
@@ -453,8 +453,8 @@ task MarkDuplicates {
       --CREATE_MD5_FILE true
   }
   runtime {
-    cpus: 8
-    requested_memory: 48000
+    cpus: 18
+    requested_memory: 128000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -507,8 +507,8 @@ task CreateSequenceGroupingTSV {
     CODE
   >>>
   runtime {
-    cpus: 8
-    requested_memory: 20000
+    cpus: 18
+    requested_memory: 128000
   }
   output {
     Array[Array[String]] sequence_grouping = read_tsv("sequence_grouping.txt")
@@ -532,7 +532,7 @@ task BaseRecalibrator {
   
 
   command { 
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xms14000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Xms14000m" \
       BaseRecalibrator \
       -R ${ref_fasta} \
       -I ${input_bam} \
@@ -543,8 +543,8 @@ task BaseRecalibrator {
       -L ${sep=" -L " sequence_group_interval}
   }
   runtime {
-    cpus: 8
-    requested_memory: 32000
+    cpus: 18
+    requested_memory: 128000
   }
   output {
     File recalibration_report = "${recalibration_report_filename}"
@@ -559,14 +559,14 @@ task GatherBqsrReports {
 
 
   command {
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xms3000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Xms3000m" \
       GatherBQSRReports \
       -I ${sep=' -I ' input_bqsr_reports} \
       -O ${output_report_filename}
     }
   runtime {
     cpus: 4
-    requested_memory: 8000
+    requested_memory: 28000
   }
   output {
     File output_bqsr_report = "${output_report_filename}"
@@ -586,7 +586,7 @@ task ApplyBQSR {
 
 
   command {  
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xms14000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Xms14000m" \
       ApplyBQSR \
       -R ${ref_fasta} \
       -I ${input_bam} \
@@ -599,8 +599,8 @@ task ApplyBQSR {
       --use-original-qualities
   }
   runtime {
-    cpus: 8
-    requested_memory: 24000
+    cpus: 6
+    requested_memory: 42000
   }
   output {
     File recalibrated_bam = "${output_bam_basename}.bam"
@@ -615,7 +615,7 @@ task GatherBamFiles {
   Int compression_level
 
   command {
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms2000m" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Dsamjdk.compression_level=${compression_level} -Xms2000m" \
       GatherBamFiles \
       --INPUT ${sep=' --INPUT ' input_bams} \
       --OUTPUT ${output_bam_basename}.bam \
@@ -623,8 +623,8 @@ task GatherBamFiles {
       --CREATE_MD5_FILE true
     }
   runtime {
-    cpus: 8
-    requested_memory: 18000
+    cpus: 6
+    requested_memory: 42000
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -651,7 +651,7 @@ task HaplotypeCaller {
   command <<<
   set -e
   
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xmx24000m ${java_opt}" \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Xmx42000m ${java_opt}" \
       HaplotypeCaller \
       -R ${ref_fasta} \
       -I ${input_bam} \
@@ -662,8 +662,8 @@ task HaplotypeCaller {
   >>>
 
   runtime {
-    cpus: 8
-    requested_memory: 24000
+    cpus: 6
+    requested_memory: 42000
   }
 
   output {
@@ -682,15 +682,15 @@ task MergeGVCFs {
   command <<<
   set -e
 
-    /group/hpi001/gatk/gatk-4.0.6.0/gatk --java-options "-Xmx24000m"  \
+    /group/hpi001/gatk/gatk-4.2.0.0/gatk --java-options "-Xmx42000m"  \
       MergeVcfs \
       --INPUT ${sep=' --INPUT ' input_vcfs} \
       --OUTPUT ${output_filename}
   >>>
 
   runtime {
-    cpus: 8
-    requested_memory: 24000
+    cpus: 6
+    requested_memory: 42000
   }
 
 
