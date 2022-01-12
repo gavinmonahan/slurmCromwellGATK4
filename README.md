@@ -8,15 +8,17 @@ See the [GATK](https://gatk.broadinstitute.org/hc/en-us) website for more inform
 ### Dependencies
 The following versions have been tested and work, but GATK and Cromwell are regularly updated and so one must consider whether they would like to use newer versions of these tools. 
 - BWA/0.7.15
-- GATK v4.0.6.0
+- GATK v4.2.0.0
 - SAMtools/1.5
 - picard/2.9
 - Python/2.7
-- Cromwell v61
+- Cromwell v72
+- java/11.0.12
 
 ## Quick start guide
 
-If you're running on Kaya, this has all been done.
+If you're running on Kaya, this has all been done. Just edit your samples.txt files and skip to step 6.
+You should use the `_nochildren.sh` shell files so all tasks run within one job. Running the other batch script will create a new job for each task which is tricky on Kaya due to limited resources and node configuration issues.
 
 ### Installing and preparing environment for GATK4 with Cromwell
 
@@ -119,7 +121,7 @@ hapmap_3.3.hg38.vcf.gz.tbi
         - The paths to your jar files will need to be updated
         - The path to your conda `activate` binary will need to be updated (e.g. `/group/projectID/userID/miniconda/bin/activate`)
 
-6. Launch the job using `sbatch launch_cromwell.sh`. When that has completed successfully, you can launch the second stage of the pipeline (joint calling) with `sbatch launch_jointgt.sh`.
+6. Launch the job using `sbatch launch_cromwell_nochildren.sh`. When that has completed successfully, you can launch the second stage of the pipeline (joint calling) with `sbatch launch_jointgt.sh`.
 
 ### Overview of the steps in `Multisample_Fastq_to_Gvcf_GATK4.wdl`
 This part of the pipeline takes short-read, Illumina paired-end fastq files as the input. The outputs generated are sorted, duplicate marked bam files and their indices, duplicate metric information, and a GVCF file for each sample. The GVCF files are used as input for the second part of the pipeline (joint genotyping).
