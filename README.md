@@ -17,8 +17,11 @@ The following versions have been tested and work, but GATK and Cromwell are regu
 
 ## Quick start guide
 
-If you're running on Kaya, this has all been done. Just edit your samples.txt files and skip to step 6.
-You should use the `_nochildren.sh` shell files so all tasks run within one job. Running the other batch script will create a new job for each task which is tricky on Kaya due to limited resources and node configuration issues.
+If you're running on Kaya, this has all been done. Just edit your `samples.txt` files and skip to step 6.
+
+The working directory on Kaya is `/group/hpi001/gatk/` for fastq files, tools, and references, and `/group/hpi001/gatk/slurmCromwellGATK4/` for files in this repo. Output directory is `/scratch/hpi001/gatk_out/`.
+
+You should use the `_nochildren.sh` shell files so all tasks run within one job. Running the other batch script will create a new job for each task which is tricky on Kaya due to limited resources and node configuration issues. IE if jobs spawn on different nodes, the next task will not be able to find the files.
 
 ### Installing and preparing environment for GATK4 with Cromwell
 
