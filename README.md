@@ -17,7 +17,7 @@ The following versions have been tested and work, but GATK and Cromwell are regu
 
 ## Quick start guide
 
-If you're running on Kaya, this has all been done. Just edit your `samples.txt` files and skip to step 6.
+If you're running on Kaya, this has all been done. Just edit your `samples.txt` files (see step 5) and skip to step 6.
 
 The working directory on Kaya is `/group/hpi001/gatk/` for fastq files, tools, and references, and `/group/hpi001/gatk/slurmCromwellGATK4/` for files in this repo. Output directory is `/scratch/hpi001/gatk_out/`.
 
@@ -102,10 +102,10 @@ hapmap_3.3.hg38.vcf.gz.tbi
     - `Multisample_Fastq_to_Gvcf_GATK4_inputs_hg38.json`
     - `Multisample_jointgt_GATK4_inputs_hg38.json`
         - both json files will need the correct paths to your reference file locations, and the file specifying your inputs i.e. `samples.txt` or `gvcfs.txt`
-    - `samples.txt`
+    - `samples.txt` and
     - `gvcfs.txt`
         - These are the sample input files (tab seperated)
-        - The format for samples.txt is sampleID, sampleID_readgroup, path_to_fastq_R1_file, path_to_fastq_R2_file,
+        - The format for samples.txt is sampleID, sampleID_readgroup, full_path_to_fastq_R1_file, full_path_to_fastq_R2_file,
         - The format for gvcfs.txt is sample ID, gvcf, gvcf .tbi index file
         - Examples are included in this repo
         - NOTE: Having tabs, not spaces, is vital for parsing the file. Visual studio code tends to introduce spaces, so if you are having issues, check the file with another text editor such as sublime. 
