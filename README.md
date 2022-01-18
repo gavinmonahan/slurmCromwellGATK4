@@ -124,7 +124,10 @@ hapmap_3.3.hg38.vcf.gz.tbi
         - The paths to your jar files will need to be updated
         - The path to your conda `activate` binary will need to be updated (e.g. `/group/projectID/userID/miniconda/bin/activate`)
 
-6. Launch the job using `sbatch launch_cromwell_nochildren.sh`. When that has completed successfully, you can launch the second stage of the pipeline (joint calling) with `sbatch launch_jointgt.sh`.
+6. Launch the job using `sbatch launch_cromwell_nochildren.sh`. When that has completed successfully, you can launch the second stage of the pipeline (joint calling) with `sbatch launch_jointgt_nochildren.sh`.
+	N.B. For cromwell, 1 exome takes approx 1 hour and 1 genome takes approximately 20 hours (total 54GB input fastqs)
+	Joining 4 exome gVCFs takes about 1h30m
+
 
 ### Overview of the steps in `Multisample_Fastq_to_Gvcf_GATK4.wdl`
 This part of the pipeline takes short-read, Illumina paired-end fastq files as the input. The outputs generated are sorted, duplicate marked bam files and their indices, duplicate metric information, and a GVCF file for each sample. The GVCF files are used as input for the second part of the pipeline (joint genotyping).

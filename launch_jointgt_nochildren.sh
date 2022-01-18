@@ -5,7 +5,7 @@
 #SBATCH --partition=day
 #SBATCH --account=hpi001
 #SBATCH --mem=128gb
-#SBATCH --time=24:00:00
+#SBATCH --time=4:00:00
 #SBATCH --export=NONE
 #SBATCH --mail-user=gavin.monahan@perkins.org.au
 #SBATCH --mail-type=END
