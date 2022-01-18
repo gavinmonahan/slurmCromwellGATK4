@@ -7,7 +7,7 @@
 #SBATCH --mem=128gb
 #SBATCH --time=24:00:00
 #SBATCH --export=NONE
-##SBATCH --mail-user=gavin.monahan@perkins.org.au
+#SBATCH --mail-user=gavin.monahan@perkins.org.au
 #SBATCH --mail-type=END
 #SBATCH --error=%j.%x.err
 #SBATCH --output=%j.%x.out
