@@ -8,7 +8,7 @@ See the [GATK](https://gatk.broadinstitute.org/hc/en-us) website for more inform
 ### Dependencies
 The following versions have been tested and work, but GATK and Cromwell are regularly updated and so one must consider whether they would like to use newer versions of these tools. 
 - BWA/0.7.15
-- GATK v4.2.0.0
+- GATK v4.2.3.0
 - SAMtools/1.5
 - picard/2.9
 - Python/2.7
