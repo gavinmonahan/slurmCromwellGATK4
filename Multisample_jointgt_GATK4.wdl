@@ -386,7 +386,7 @@ task ImportGVCFs {
     # a significant amount of non-heap memory for native libraries.
     # Also, testing has shown that the multithreaded reader initialization
     # does not scale well beyond 5 threads, so don't increase beyond that.
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx4g -Xms4g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx4g -Xms4g" \
     GenomicsDBImport \
     --genomicsdb-workspace-path ${workspace_dir_name} \
     --batch-size ${batch_size} \
@@ -427,7 +427,7 @@ task GenotypeGVCFs {
     tar -xf ${workspace_tar}
     WORKSPACE=$( basename ${workspace_tar} .tar)
 
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx14g -Xms5g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx14g -Xms5g" \
      GenotypeGVCFs \
      -R ${ref_fasta} \
      -O ${output_vcf_filename} \
@@ -460,14 +460,14 @@ task HardFilterAndMakeSitesOnlyVcf {
   command {
     set -e
 
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx15g -Xms3g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx15g -Xms3g" \
       VariantFiltration \
       --filter-expression "ExcessHet > ${excess_het_threshold}" \
       --filter-name ExcessHet \
       -O ${variant_filtered_vcf_filename} \
       -V ${vcf}
 
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx15g -Xms3g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx15g -Xms3g" \
       MakeSitesOnlyVcf \
       --INPUT ${variant_filtered_vcf_filename} \
       --OUTPUT ${sites_only_vcf_filename}
@@ -504,7 +504,7 @@ task IndelsVariantRecalibrator {
 
 
   command {
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx24g -Xms24g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx24g -Xms24g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -552,7 +552,7 @@ task SNPsVariantRecalibratorCreateModel {
 
 
   command {
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx100g -Xms100g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx100g -Xms100g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -600,7 +600,7 @@ task SNPsVariantRecalibrator {
 
 
   command {
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx3g -Xms3g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx3g -Xms3g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -636,7 +636,7 @@ task GatherTranches {
     set -e
     set -o pipefail
     
-      /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx6g -Xms6g" \
+      /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx6g -Xms6g" \
       GatherTranches \
       --input ${sep=" --input " input_fofn}  \
       --output ${output_filename}
@@ -667,7 +667,7 @@ task ApplyRecalibration {
   command {
     set -e
 
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx5g -Xms5g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx5g -Xms5g" \
       ApplyVQSR \
       -O tmp.indel.recalibrated.vcf \
       -V ${input_vcf} \
@@ -677,7 +677,7 @@ task ApplyRecalibration {
       --create-output-variant-index true \
       -mode INDEL
 
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx5g -Xms5g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx5g -Xms5g" \
       ApplyVQSR \
       -O ${recalibrated_vcf_filename} \
       -V tmp.indel.recalibrated.vcf \
@@ -707,14 +707,14 @@ task GatherVcfs {
     set -o pipefail
 
     # ignoreSafetyChecks make a big performance difference so we include it in our invocation
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx6g -Xms6g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx6g -Xms6g" \
     GatherVcfsCloud \
     --ignore-safety-checks \
     --gather-type BLOCK \
     --input ${sep=" --input " input_vcfs_fofn} \
     --output ${output_vcf_name}
 
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx6g -Xms6g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx6g -Xms6g" \
     IndexFeatureFile \
     --input ${output_vcf_name}
   >>>
@@ -740,7 +740,7 @@ task CollectVariantCallingMetrics {
 
 
   command {
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx6g -Xms6g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx6g -Xms6g" \
       CollectVariantCallingMetrics \
       --INPUT ${input_vcf} \
       --DBSNP ${dbsnp_vcf} \
@@ -770,7 +770,7 @@ task GatherMetrics {
     set -o pipefail
 
     
-    /scratch/pawsey0339/dtang/gatk4_multisample/gatk-4.1.4.1/gatk --java-options "-Xmx2g -Xms2g" \
+    /group/hpi001/gatk/gatk-4.2.3.0/gatk --java-options "-Xmx2g -Xms2g" \
     AccumulateVariantCallingMetrics \
     --INPUT ${sep=" --INPUT " input_details_fofn} \
     --OUTPUT ${output_prefix}
